@@ -29,7 +29,7 @@ model Tournament {
   entry_fee       Float
   pool_address    String
 
-  questions       Question[]
+  questions       Question[] @relation("TournamentQuestions")
   userResponses   UserResponse[]
   leaderboard     Leaderboard[]
   userPerformance UserPerformance[]
@@ -37,8 +37,6 @@ model Tournament {
 
 model Question {
   question_id    Int      @id @default(autoincrement())
-  tournament_id  Int
-  tournament     Tournament @relation(fields: [tournament_id], references: [tournament_id])
   question_text  String
   correct_answer String
   answer_1       String
@@ -47,7 +45,8 @@ model Question {
   answer_4       String
   image_url      String?
 
-  userResponses  UserResponse[]
+  tournaments        Tournament[]       @relation("TournamentQuestions")
+  userResponses      UserResponse[]
 }
 
 model UserResponse {

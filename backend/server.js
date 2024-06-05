@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const redis = require('redis');
-const { Client } = require('pg');
+const { PrismaClient } = require("@prisma/client");
 require('dotenv').config()
 
 const app = express();
@@ -11,11 +11,7 @@ const io = socketIo(server);
 const redisClient = redis.createClient();
 
 console.log(process.env.DATABASE_URL)
-// PostgreSQL client
-const pgClient = new Client({
-  connectionString: process.env.DATABASE_URL,
-});
-pgClient.connect();
+const prisma = new PrismaClient();
 
 // WebSocket connection
 io.on('connection', (socket) => {
@@ -24,6 +20,8 @@ io.on('connection', (socket) => {
     console.log('Client disconnected');
   });
 });
+
+app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send('Backend is running');

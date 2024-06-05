@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  wallet_address String  @id @unique
+  username       String  @unique
+  country_name   String
+  referred_by    String?
+  profile_image  String?
+
+  referredBy     User?   @relation("UserReferredBy", fields: [referred_by], references: [wallet_address])
+  referredUsers  User[]  @relation("UserReferredBy")
+  userResponses  UserResponse[]
+  leaderboards    Leaderboard[]
+  userPerformances UserPerformance[]
+}
+
+model Tournament {
+  tournament_id Int     @id @default(autoincrement())
+  start_timestamp DateTime
+  end_timestamp   DateTime
+  prize_pool      Float
+  entry_fee       Float
+  pool_address    String
+
+  questions       Question[]
+  userResponses   UserResponse[]
+  leaderboard     Leaderboard[]
+  userPerformance UserPerformance[]
+}
+
+model Question {
+  question_id    Int      @id @default(autoincrement())
+  tournament_id  Int
+  tournament     Tournament @relation(fields: [tournament_id], references: [tournament_id])
+  question_text  String
+  correct_answer String
+  answer_1       String
+  answer_2       String
+  answer_3       String
+  answer_4       String
+  image_url      String?
+
+  userResponses  UserResponse[]
+}
+
+model UserResponse {
+  response_id    Int       @id @default(autoincrement())
+  tournament_id  Int
+  question_id    Int
+  wallet_address String
+  selected_answer String
+  response_time DateTime
+
+  tournament    Tournament @relation(fields: [tournament_id], references: [tournament_id])
+  question      Question   @relation(fields: [question_id], references: [question_id])
+  user          User       @relation(fields: [wallet_address], references: [wallet_address])
+}
+
+model Leaderboard {
+  leaderboard_id Int       @id @default(autoincrement())
+  tournament_id  Int
+  wallet_address String
+  score          Int
+  rank           Int
+
+  tournament     Tournament @relation(fields: [tournament_id], references: [tournament_id])
+  user           User       @relation(fields: [wallet_address], references: [wallet_address])
+}
+
+model UserPerformance {
+  performance_id Int       @id @default(autoincrement())
+  wallet_address String
+  tournament_id  Int
+  score          Int
+  correct_answers Int
+  total_time     String
+
+  tournament     Tournament @relation(fields: [tournament_id], references: [tournament_id])
+  user           User       @relation(fields: [wallet_address], references: [wallet_address])
+}

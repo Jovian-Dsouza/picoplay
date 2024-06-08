@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import { ReactQueryProvider } from "./providers/react-query-provider";
 import { SolanaProvider } from "./providers/solana-provider";
+import Footer from "./components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,11 +23,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <ReactQueryProvider>
           <SolanaProvider>
-            <div className="flex flex-col justify-between min-h-screen bg-white">
+            <div className="flex flex-col justify-between min-h-screen bg-[#F8FBFF] text-black">
               <div className="flex flex-col">
                 <Header />
                 {children}
               </div>
+              <Footer/>
             </div>
           </SolanaProvider>
         </ReactQueryProvider>

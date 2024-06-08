@@ -82,37 +82,63 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <Head>
-        <title>Quiz App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div className="flex min-h-screen flex-col">
+      <main className="flex flex-col w-full flex-1  text-center">
+        <section className="flex flex-col items-center justify-center text-center px-4 py-14 mb-4 bg-bonk-banner bg-bottom">
+          <div className="text-2xl font-bold">Who’s The Genius</div>
+          <p className="text-[#404040] font-semibold mt-4 max-w-xs md:max-w-md">
+            Play weekly quizzes, compete for a growing prize pool, and earn
+            rewards.
+          </p>
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <div className="text-4xl font-bold mb-12">Jovian Dsouza</div>
+          <button className="bg-white border-b-[6px] border-r-[6px] border-[#3C5381] shadow-lg text-black text-xl font-bold rounded-full px-8 py-4 mt-10 w-full md:max-w-md">
+            Register Now
+          </button>
+        </section>
 
-        {question && (
-          <>
-            <div className="text-2xl font-bold mb-4 text-red-300">{timeLeft}</div>
-            <QuizQuestion
-              question_id={question.question_id}
-              question_text={question.question_text}
-              answer_1={question.answer_1}
-              answer_2={question.answer_2}
-              answer_3={question.answer_3}
-              answer_4={question.answer_4}
-              image_url={question.image_url}
-              selectedAnswer={selectedAnswer}
-              onSelectAnswer={(ans: string) => setSelectedAnswer(ans)}
-            />
-            <button
-              onClick={handleSubmit}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-            >
-              Submit Answer
-            </button>
-          </>
-        )}
+        <section className="text-center mb-6 space-y-2">
+          <p className="text-sm">Next Tournament Starts in</p>
+          <p className="text-2xl font-bold">22d : 17h : 10m</p>
+        </section>
+
+        <div className="space-y-2 px-4">
+          <div className="homepage-box-blue homepage-box">
+            <span>50 Questions</span>
+          </div>
+          <div className="homepage-box-yellow homepage-box">
+            <span>100M Bonk Price Pool</span>
+          </div>
+          <div className="homepage-box-green homepage-box">
+            <span>1200+ Participants</span>
+          </div>
+        </div>
+
+
+        <section className="my-6 px-4 text-left">
+          <h3 className="text-lg font-bold mb-2">FAQ</h3>
+          <div className="space-y-2">
+            <details className="faq-box">
+              <summary className="cursor-pointer">
+                What’s the scope of the questions?
+              </summary>
+              <p className="mt-2">
+                The questions cover a wide range of topics.
+              </p>
+            </details>
+            <details className="faq-box">
+              <summary className="cursor-pointer">
+                Do I need to deposit tokens before playing?
+              </summary>
+              <p className="mt-2">Yes, a deposit is required to participate.</p>
+            </details>
+            <details className="faq-box">
+              <summary className="cursor-pointer">
+                How long does the quiz last?
+              </summary>
+              <p className="mt-2">The quiz typically lasts for 30 minutes.</p>
+            </details>
+          </div>
+        </section>
       </main>
     </div>
   );

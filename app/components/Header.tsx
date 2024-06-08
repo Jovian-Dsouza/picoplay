@@ -16,10 +16,10 @@ export function Logo() {
 
 function Header() {
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 xl:px-6 w-full my-3">
-      <div className="relative flex items-center justify-between header-bg-border">
+    <div className="mx-auto px-6 md:px-12 py-2 md:px-12 xl:px-6 w-full mt-3 border-b-2">
+      <div className="relative flex items-center justify-between header-bg-border  ">
         <Logo />
-        <WalletButton/>
+        <WalletButton />
       </div>
     </div>
   );

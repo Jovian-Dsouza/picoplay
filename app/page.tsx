@@ -89,7 +89,7 @@ export default function Home() {
       </Head>
 
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <div className="text-4xl font-bold mb-12">Pico Play</div>
+        <div className="text-4xl font-bold mb-12">Jovian Dsouza</div>
 
         {question && (
           <>

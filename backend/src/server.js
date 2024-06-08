@@ -1,11 +1,12 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const redis = require('redis');
+const express = require("express");
+const http = require("http");
+const socketIo = require("socket.io");
+const redis = require("redis");
 const cors = require("cors");
-const dayjs = require("dayjs");
 const { PrismaClient } = require("@prisma/client");
-require('dotenv').config()
+const dayjs = require("dayjs");
+require("dotenv").config();
+const TournamentManager = require("./TournamentManager");
 
 const app = express();
 const server = http.createServer(app);
@@ -16,12 +17,13 @@ const io = socketIo(server, {
     allowedHeaders: ["Content-Type"],
   },
 });
-const redisClient = redis.createClient();
 
-console.log(process.env.DATABASE_URL)
+const redisClient = redis.createClient();
 const prisma = new PrismaClient();
 
-async function readAndSendQuestion(socket){
+const tournamentManager = new TournamentManager(io);
+
+async function readAndSendQuestion(socket) {
   try {
     // Read the first question from the Prisma database
     const question = await prisma.question.findFirst();
@@ -49,8 +51,8 @@ async function readAndSendQuestion(socket){
 
 // WebSocket connection
 // TODO add auth middleware
-io.on('connection', async (socket) => {
-  console.log('New client connected');
+io.on("connection", async (socket) => {
+  console.log("New client connected");
   readAndSendQuestion(socket);
 
   socket.on("submitAnswer", (data) => {
@@ -60,23 +62,40 @@ io.on('connection', async (socket) => {
     // Handle the received answer (e.g., save it to a database, check correctness, etc.)
   });
 
-  // check if the tournament has started if the tounament has start then send meta data to that client
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
+  // check if the tournament has started if the tournament has started then send meta data to that client
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
   });
 });
 
 // Middleware
-app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:3000" // Replace with your frontend URL
-}));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:3000", // Replace with your frontend URL
+  })
+);
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Backend is running');
+app.get("/", (req, res) => {
+  res.send("Backend is running");
 });
 
-//TODO remove
+app.get("/startTournament/:tournamentId", async (req, res) => {
+  try {
+    const tournamentId = parseInt(req.params.tournamentId);
+    if (isNaN(tournamentId)) {
+      return res.status(400).send("Invalid tournament ID");
+    }
+
+    await tournamentManager.startTournament(tournamentId);
+    res.send(`Started Tournament ${tournamentId}`);
+  } catch (error) {
+    console.error(`Error in /startTournament endpoint:`, error);
+    res.status(500).send("Error starting tournament");
+  }
+});
+
+// TODO remove
 app.get("/questions", async (req, res) => {
   const questions = await prisma.question.findMany();
   res.json(questions);

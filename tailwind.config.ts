@@ -14,6 +14,9 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         "bonk-banner": "url('/bonk-banner.png')",
       },
+      fontFamily: {
+        dmsans: ["var(--font-dmsans)"],
+      },
     },
   },
   plugins: [],

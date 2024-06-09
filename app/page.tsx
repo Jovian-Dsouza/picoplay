@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
+import TournamentStartClock from "./components/TournamentStartClock";
 
 dayjs.extend(duration);
 
@@ -96,12 +97,9 @@ export default function Home() {
           </button>
         </section>
 
-        <section className="text-center mb-6 space-y-2">
-          <p className="text-sm">Next Tournament Starts in</p>
-          <p className="text-2xl font-bold">22d : 17h : 10m</p>
-        </section>
+        <TournamentStartClock />
 
-        <div className="space-y-2 px-4">
+        <div className="space-y-2 px-4 mt-6">
           <div className="homepage-box-blue homepage-box">
             <span>50 Questions</span>
           </div>

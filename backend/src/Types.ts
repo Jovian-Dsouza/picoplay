@@ -23,6 +23,16 @@ export interface Answer {
   time: number;
 }
 
+export interface AnswerWithResponse {
+  question_id: number;
+  correct_option: string;
+  correct_answer: string;
+  user_option: string;
+  time: number;
+  total_correct: number;
+  total_incorrect: number;
+}
+
 export interface ClientResponse {
   answer: string;
   question_id: string;

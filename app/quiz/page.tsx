@@ -5,7 +5,11 @@ import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import { AnswerWithResponse, QuestionWithTime as Question } from "@/backend/src/Types";
+import {
+  AnswerWithResponse,
+  QuestionWithTime as Question,
+} from "@/backend/src/Types";
+import QuizWaiting from "../components/QuizWaiting";
 
 dayjs.extend(duration);
 
@@ -21,19 +25,19 @@ const testQuestion = {
 };
 
 const testAnswer = {
-  question_id : 1,
+  question_id: 1,
   correct_option: "A",
-  correct_answer : "48",
+  correct_answer: "48",
   user_option: "B",
-  time : 20,
+  time: 20,
   total_correct: 1,
   total_incorrect: 0,
-}
+};
 
 export default function Quiz() {
-  const [question, setQuestion] = useState<Question | null>(testQuestion);
-  const [answer, setAnswer] = useState<AnswerWithResponse | null>(testAnswer);
-  
+  const [question, setQuestion] = useState<Question | null>(null);
+  const [answer, setAnswer] = useState<AnswerWithResponse | null>(null);
+
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
@@ -53,11 +57,14 @@ export default function Quiz() {
     };
   }, []);
 
+  if (!question && !answer) {
+    return <QuizWaiting socket={socket} />;
+  }
   return (
     <div className="flex  flex-col items-center">
       {/* Quiz progress bar*/}
       <QuizQuestion question={question} socket={socket}/>
-      {/* <QuizAnswer answer={answer} socket={socket} /> */}
+      <QuizAnswer answer={answer} socket={socket} />
     </div>
   );
 }

@@ -1,86 +1,11 @@
 "use client";
-import Head from "next/head";
-import QuizQuestion from "./components/QuizQuestion";
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import TournamentStartClock from "./components/TournamentStartClock";
 
 dayjs.extend(duration);
 
-interface Question {
-  question_id: number;
-  question_text: string;
-  answer_1: string;
-  answer_2: string;
-  answer_3: string;
-  answer_4: string;
-  image_url?: string;
-  end_timestamp: number;
-}
-
-
 export default function Home() {
-  const [question, setQuestion] = useState<Question | null>();
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [timeLeft, setTimeLeft] = useState<string>("");
-
-  useEffect(() => {
-    // Connect to the WebSocket server
-    const socketInstance: Socket = io(
-      process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"
-    );
-    setSocket(socketInstance);
-
-    // Listen for the 'firstQuestion' event
-    socketInstance.on("question", (data: Question) => {
-      console.log(data);
-      setQuestion(data);
-      setSelectedAnswer(null);
-    });
-
-    // Cleanup on unmount
-    return () => {
-      socketInstance.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (question) {
-      const interval = setInterval(() => {
-        const now = dayjs();
-        const end = dayjs(question.end_timestamp);
-        const diff = end.diff(now);
-
-        if (diff <= 0) {
-          clearInterval(interval);
-          setTimeLeft("Time's up!");
-          // Optionally, you can handle the timeout scenario here
-        } else {
-          const duration = dayjs.duration(diff);
-          setTimeLeft(
-            `${duration.minutes()}:${duration
-              .seconds()
-              .toString()
-              .padStart(2, "0")}`
-          );
-        }
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [question]);
-
-  const handleSubmit = () => {
-    if (socket && question && selectedAnswer) {
-      socket.emit("submitAnswer", {
-        question_id: question.question_id,
-        answer: selectedAnswer,
-      });
-    }
-  };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -110,7 +35,6 @@ export default function Home() {
             <span>1200+ Participants</span>
           </div>
         </div>
-
 
         <section className="my-6 px-4 text-left">
           <h3 className="text-lg font-bold mb-2">FAQ</h3>

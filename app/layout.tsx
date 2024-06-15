@@ -31,7 +31,7 @@ export default function RootLayout({
         <ReactQueryProvider>
           <SolanaProvider>
             <div className="flex flex-col justify-between min-h-screen bg-[#F8FBFF] text-black">
-              <div className="flex flex-col">
+              <div className="flex flex-col ">
                 <Header />
                 {children}
               </div>

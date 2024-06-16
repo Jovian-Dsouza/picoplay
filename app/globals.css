@@ -59,26 +59,42 @@ body {
 }
 
 @layer utilities {
-  .homepage-box{
-    @apply text-black font-semibold px-8 py-6 rounded-lg flex items-center
+  .homepage-box {
+    @apply text-black font-semibold px-8 py-6 rounded-lg flex items-center;
   }
 
   .faq-box {
-    @apply bg-white px-4 py-4 rounded-lg
+    @apply bg-white px-4 py-4 rounded-lg;
   }
 }
 
 .homepage-box-blue {
-  border: 1px solid rgba(0, 0, 0, 0.10);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   background: rgba(68, 197, 252, 0.31);
 }
 
 .homepage-box-yellow {
-  border: 1px solid rgba(0, 0, 0, 0.10);
-  background: #FFE458;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffe458;
 }
 
 .homepage-box-green {
-  border: 1px solid rgba(0, 0, 0, 0.10);
-  background: #7AFF9F;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #7aff9f;
+}
+
+/* https://css-generators.com/custom-borders/ */
+.zigzag-top {
+  --mask: conic-gradient(from 147.5deg at top,#0000,#000 1deg 64deg,#0000 65deg) 50%/15.29px 100%;
+  -webkit-mask: var(--mask);
+          mask: var(--mask);
+}
+
+.reward-box {
+  border-radius: 2px 2px 0px 0px;
+  border-top: 2px solid rgba(192, 161, 0, 0.46);
+  background-image: url('/zigzag-box.png');
+  background-size: cover;
+  height: 144px;
+  width: 275px;
 }

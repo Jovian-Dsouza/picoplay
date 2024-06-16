@@ -10,6 +10,7 @@ import {
   QuestionWithTime as Question,
 } from "@/backend/src/Types";
 import QuizWaiting from "../components/QuizWaiting";
+import QuizFinished from "../components/QuizFinished";
 
 dayjs.extend(duration);
 
@@ -39,6 +40,7 @@ export default function Quiz() {
   const [answer, setAnswer] = useState<AnswerWithResponse | null>(null);
 
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [finished, setFinished] = useState(false);
 
   useEffect(() => {
     // Connect to the WebSocket server
@@ -57,14 +59,20 @@ export default function Quiz() {
     };
   }, []);
 
+  if (finished) {
+    return <QuizFinished />;
+  }
+
   if (!question && !answer) {
     return <QuizWaiting socket={socket} />;
   }
+
   return (
     <div className="flex  flex-col items-center">
-      {/* Quiz progress bar*/}
-      <QuizQuestion question={question} socket={socket}/>
+      {/* TODO: Quiz progress bar*/}
+      <QuizQuestion question={question} socket={socket} />
       <QuizAnswer answer={answer} socket={socket} />
+      {/* TODO: Quiz time left */}
     </div>
   );
 }

@@ -2,8 +2,8 @@ import React, { useMemo } from "react";
 import { AnswerWithResponse } from "@/backend/src/Types";
 import { Socket } from "socket.io-client";
 import { AnswerClock } from "./AnswerClock";
-import { CheckCircleIcon } from "./CheckCircleIcon";
-import { XCircleIcon } from "./XCircleIcon";
+import { CheckCircleIcon } from "./icons/CheckCircleIcon";
+import { XCircleIcon } from "./icons/XCircleIcon";
 
 function QuizAnswer({
   answer,
@@ -35,10 +35,11 @@ function QuizAnswer({
         </div>
         {!isCorrect && (
           <p className="text-black text-opacity-50 text-sm font-dmsans">
-            The correct answer was <span className="font-semibold">{answer.correct_option}.</span>
+            The correct answer was{" "}
+            <span className="font-semibold">{answer.correct_option}.</span>
           </p>
         )}
-        <div className="py-2"/>
+        <div className="py-2" />
         {isCorrect ? <CheckCircleIcon /> : <XCircleIcon />}
 
         <AnswerClock socket={socket} startTime={answer.time} />

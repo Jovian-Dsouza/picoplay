@@ -1,6 +1,10 @@
 "use client";
 import Image from "next/image";
 import React, { ReactNode, useMemo, useState } from "react";
+import { CheckCircleIcon } from "../components/icons/CheckCircleIcon";
+import Link from "next/link";
+import { TwitterIcon } from "../components/icons/TwitterIcon";
+import { ArrowUpward } from "../components/icons/ArrowUpward";
 
 const TokenButton = ({
   selected,
@@ -26,7 +30,66 @@ const TokenButton = ({
   );
 };
 
-const OnboardingPage = () => {
+function PaymentComplete() {
+  const userName = "Aryan";
+  const nextTournamentDate = "1st July, 13:00 UTC";
+
+  return (
+    <div className="min-h-[80vh] flex flex-col items-center justify-between py-16 bg-[#F8FBFF]">
+      <div className="bg-white shadow-lg rounded-lg px-6 py-10 max-w-xs text-center">
+        <div className="flex items-center justify-center space-x-2 mb-4">
+          <CheckCircleIcon width="24" height="24" />
+          <span className="text-xl font-medium text-black font-dmsans">
+            You are all set, {userName}!
+          </span>
+        </div>
+
+        <div className="font-dmsans text-black text-sm opacity-50 mb-8">
+          The next tournament is on {nextTournamentDate}
+        </div>
+        <Image
+          src="/bonk-mascot.png"
+          alt="Tournament Mascot"
+          width={100}
+          height={100}
+          className="mx-auto"
+        />
+        <button
+          className="flex flex-row items-center justify-center w-full bg-[#4785FF] text-white text-sm font-dmsans font-medium rounded-[64px] py-2 mb-6 border border-black border-opacity-10 shadow-inner"
+          style={{ boxShadow: "3px 4px 0px 0px rgba(0, 0, 0, 0.25)" }}
+        >
+          Share on{" "}
+          <span className="px-1">
+            <TwitterIcon />
+          </span>
+          for more goodwill{" "}
+          <span className="px-1">
+            <ArrowUpward />
+          </span>
+        </button>
+        <div className="text-sm text-black text-opacity-50">
+          Earn a percentage of rewards when your referred user wins!
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center text-center justify-center max-w-[16rem] mt-16 space-y-3">
+        <div className="text-sm text-black font-dmsans">
+          follow{" "}
+          <span className="underline">
+            <Link href="https://x.com/picoplayfun">@picoplayfun</Link>
+          </span>{" "}
+          for more updates
+        </div>
+        <div className="text-xs text-black text-opacity-50 font-dmsans">
+          revisit this site on the match day and connect your wallet to continue
+          playing
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PaymentSelect() {
   const tournamentTitle = "Tournament #1";
   const rewardToken = "BONK";
   const rewardAmount = "1 million";
@@ -94,6 +157,16 @@ const OnboardingPage = () => {
       </div>
     </div>
   );
+}
+
+const OnboardingPage = () => {
+  const paymentComplete = false;
+
+  if (paymentComplete) {
+    return <PaymentComplete />;
+  }
+
+  return <PaymentSelect />;
 };
 
 export default OnboardingPage;

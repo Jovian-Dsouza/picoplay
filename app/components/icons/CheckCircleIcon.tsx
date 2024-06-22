@@ -1,9 +1,9 @@
-export function CheckCircleIcon() {
+export function CheckCircleIcon({width = "60", height="60"}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="60"
-      height="59"
+      width={width}
+      height={height}
       viewBox="0 0 60 59"
       fill="none"
     >

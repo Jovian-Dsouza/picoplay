@@ -7,6 +7,7 @@ import { PrismaClient } from "@prisma/client";
 require("dotenv").config();
 import TournamentManager from "./TournamentManager";
 import Coordinator from "./Coordinator";
+import userRouter from "./routers/user"; 
 
 const app = express();
 const server = createServer(app);
@@ -50,6 +51,8 @@ app.get("/startTournament/:tournamentId", async (req, res) => {
     res.status(500).send("Error starting tournament");
   }
 });
+
+app.use("/v1", userRouter);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

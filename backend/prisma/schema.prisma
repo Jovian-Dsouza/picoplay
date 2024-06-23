@@ -10,6 +10,7 @@ datasource db {
 model User {
   wallet_address String  @id @unique
   username       String  @unique
+  x_username     String
   country_name   String
   referred_by    String?
   profile_image  String?

@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import { ReactQueryProvider } from "./providers/react-query-provider";
 import { SolanaProvider } from "./providers/solana-provider";
 import Footer from "./components/Footer";
+import { RecoilProvider } from "./providers/recoil-privoder";
 
 const inter = Inter({ subsets: ["latin"] });
 const dmsans = DM_Sans({
@@ -25,19 +26,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} ${dmsans.variable}`}
-      >
+      <body className={`${inter.className} ${dmsans.variable}`}>
         <ReactQueryProvider>
-          <SolanaProvider>
-            <div className="flex flex-col justify-between min-h-screen bg-[#F8FBFF] text-black">
-              <div className="flex flex-col ">
-                <Header />
-                {children}
+          <RecoilProvider>
+            <SolanaProvider>
+              <div className="flex flex-col justify-between min-h-screen bg-[#F8FBFF] text-black">
+                <div className="flex flex-col ">
+                  <Header />
+                  {children}
+                </div>
+                <Footer />
               </div>
-              <Footer />
-            </div>
-          </SolanaProvider>
+            </SolanaProvider>
+          </RecoilProvider>
         </ReactQueryProvider>
       </body>
     </html>

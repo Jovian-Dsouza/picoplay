@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { QuestionWithTime as Question } from "@/backend/src/Types";
 import { Socket } from "socket.io-client";
-import { QuestionClock } from "./QuestionClock";
-import { LockButton } from "./LockButton";
+import { QuestionClock } from "@/src/components/clocks/QuestionClock";
+import { LockButton } from "@/src/components/quiz/LockButton";
 
 function QuizQuestion({
   question,

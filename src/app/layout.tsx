@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Inter, DM_Sans } from "next/font/google";
 import "./globals.css";
-import Header from "./components/Header";
-import { ReactQueryProvider } from "./providers/react-query-provider";
-import { SolanaProvider } from "./providers/solana-provider";
-import Footer from "./components/Footer";
-import { RecoilProvider } from "./providers/recoil-privoder";
-import { CustomWalletProvider } from "./providers/custom-wallet-provider";
+import Header from "@/src/components/Header";
+import { ReactQueryProvider } from "@/src/providers/react-query-provider";
+import { SolanaProvider } from "@/src/providers/solana-provider";
+import Footer from "@/src/components/Footer";
+import { RecoilProvider } from "@/src/providers/recoil-privoder";
+import { CustomWalletProvider } from "@/src/providers/custom-wallet-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 const dmsans = DM_Sans({

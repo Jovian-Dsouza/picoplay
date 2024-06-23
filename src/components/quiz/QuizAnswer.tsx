@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { AnswerWithResponse } from "@/backend/src/Types";
 import { Socket } from "socket.io-client";
-import { AnswerClock } from "./AnswerClock";
-import { CheckCircleIcon } from "./icons/CheckCircleIcon";
-import { XCircleIcon } from "./icons/XCircleIcon";
+import { AnswerClock } from "@/src/components/clocks/AnswerClock";
+import { CheckCircleIcon } from "@/src/components/icons/CheckCircleIcon";
+import { XCircleIcon } from "@/src/components/icons/XCircleIcon";
 
 function QuizAnswer({
   answer,
@@ -25,7 +25,7 @@ function QuizAnswer({
 
   return (
     <div
-      className={`w-full px-8 pt-16 bg-gradient-to-b to-[#F8FBFF] ${
+      className={`flex flex-col items-center justify-center w-full px-8 pt-16 bg-gradient-to-b to-[#F8FBFF] ${
         isCorrect ? "from-green-100" : "from-red-100"
       }`}
     >

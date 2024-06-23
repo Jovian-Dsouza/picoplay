@@ -2,13 +2,13 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { WalletButton } from "../providers/solana-provider";
-import { getAuthDetails, storeAuthDetails } from "../utils/storage-helper";
+import { WalletButton } from "@/src/providers/solana-provider";
+import { getAuthDetails, storeAuthDetails } from "@/src/utils/storage-helper";
 import { useSetRecoilState } from "recoil";
-import { tokenAtom } from "@/app/store/atoms/appAtoms";
+import { tokenAtom } from "@/src/store/atoms/appAtoms"
 import { useRouter } from "next/navigation";
-import { checkUser, loginUser } from "../utils/api-helpter";
-import { useCustomWallet } from "../providers/custom-wallet-provider";
+import { checkUser, loginUser } from "@/src/utils/api-helpter";
+import { useCustomWallet } from "@/src/providers/custom-wallet-provider";
 
 export function Logo() {
   return (

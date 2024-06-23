@@ -1,12 +1,11 @@
 "use client";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import TournamentStartClock from "./components/TournamentStartClock";
+import TournamentStartClock from "../components/clocks/TournamentStartClock";
 
 dayjs.extend(duration);
 
 export default function Home() {
-
   return (
     <div className="flex min-h-screen flex-col">
       <main className="flex flex-col w-full flex-1  text-center">

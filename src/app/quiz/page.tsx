@@ -1,6 +1,4 @@
 "use client";
-import QuizQuestion from "../components/QuizQuestion";
-import QuizAnswer from "../components/QuizAnswer";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import dayjs from "dayjs";
@@ -9,8 +7,10 @@ import {
   AnswerWithResponse,
   QuestionWithTime as Question,
 } from "@/backend/src/Types";
-import QuizWaiting from "../components/QuizWaiting";
-import QuizFinished from "../components/QuizFinished";
+import QuizQuestion from "@/src/components/quiz/QuizQuestion";
+import QuizAnswer from "@/src/components/quiz/QuizAnswer";
+import QuizWaiting from "@/src/components/quiz/QuizWaiting";
+import QuizFinished from "@/src/components/quiz/QuizFinished";
 
 dayjs.extend(duration);
 

@@ -1,10 +1,10 @@
 "use client";
 import Image from "next/image";
 import React, { ReactNode, useMemo, useState } from "react";
-import { CheckCircleIcon } from "../components/icons/CheckCircleIcon";
+import { CheckCircleIcon } from "@/src/components/icons/CheckCircleIcon";
 import Link from "next/link";
-import { TwitterIcon } from "../components/icons/TwitterIcon";
-import { ArrowUpward } from "../components/icons/ArrowUpward";
+import { TwitterIcon } from "@/src/components/icons/TwitterIcon";
+import { ArrowUpward } from "@/src/components/icons/ArrowUpward";
 
 const TokenButton = ({
   selected,

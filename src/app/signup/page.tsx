@@ -1,12 +1,16 @@
 "use client";
 import React from "react";
-import TournamentStartClock from "../components/TournamentStartClock";
-import { WalletDisplay } from "../components/WalletDisplay";
-import { usernameAtom, xUsernameAtom, countryAtom } from "@/app/store/atoms/signUpAtoms";
+import TournamentStartClock from "@/src/components/clocks/TournamentStartClock";
+import { WalletDisplay } from "@/src/components/WalletDisplay";
+import {
+  usernameAtom,
+  xUsernameAtom,
+  countryAtom,
+} from "@/src/store/atoms/signUpAtoms";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { storeAuthDetails } from "../utils/storage-helper";
-import { signinUser } from "../utils/api-helpter";
-import { useCustomWallet } from "../providers/custom-wallet-provider";
+import { storeAuthDetails } from "@/src/utils/storage-helper";
+import { signinUser } from "@/src/utils/api-helpter";
+import { useCustomWallet } from "@/src/providers/custom-wallet-provider";
 
 const UsernameInput = () => {
   const [username, setUsername] = useRecoilState(usernameAtom);
@@ -62,7 +66,7 @@ const XUsernameInput = () => {
   );
 };
 
-const RegisterButton = ({ onClick }: { onClick : any}) => (
+const RegisterButton = ({ onClick }: { onClick: any }) => (
   <button
     type="button"
     className="mt-4 w-full bg-[#282E43] text-white rounded-full py-2 px-4 font-semibold cursor-pointer"
@@ -85,22 +89,26 @@ const SignUpPage = () => {
     }
     try {
       const signature = await getSignature();
-      const token = await signinUser(walletAddress, username, xUsername, country, signature);
-      if (token){
+      const token = await signinUser(
+        walletAddress,
+        username,
+        xUsername,
+        country,
+        signature
+      );
+      if (token) {
         storeAuthDetails({
           token,
-          wallet_address: walletAddress
-        })
-      } 
-      else{
+          wallet_address: walletAddress,
+        });
+      } else {
         //TODO show error modal
-        console.error("Failed to sign and send")
+        console.error("Failed to sign and send");
       }
     } catch (error) {
       //TODO show error modal
       console.error("Failed to sign and send", error);
     }
-    
   }
 
   return (

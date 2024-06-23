@@ -1,17 +1,12 @@
 import React, { useMemo } from "react";
-import { AnswerWithResponse } from "@/backend/src/Types";
-import { Socket } from "socket.io-client";
 import { AnswerClock } from "@/src/components/clocks/AnswerClock";
 import { CheckCircleIcon } from "@/src/components/icons/CheckCircleIcon";
 import { XCircleIcon } from "@/src/components/icons/XCircleIcon";
+import { useRecoilValue } from "recoil";
+import { answerAtom } from "@/src/store/atoms/quizAtoms";
 
-function QuizAnswer({
-  answer,
-  socket,
-}: {
-  answer: AnswerWithResponse | null;
-  socket: Socket | null;
-}) {
+function QuizAnswer() {
+  const answer = useRecoilValue(answerAtom);
   const isCorrect = useMemo(() => {
     if (answer) {
       return answer.correct_option === answer.user_option;
@@ -42,7 +37,7 @@ function QuizAnswer({
         <div className="py-2" />
         {isCorrect ? <CheckCircleIcon /> : <XCircleIcon />}
 
-        <AnswerClock socket={socket} startTime={answer.time} />
+        <AnswerClock startTime={answer.time} />
       </div>
 
       <div className="flex justify-center items-center w-full max-w-sm mt-10 px-8 text-sm font-dmsans space-x-8">

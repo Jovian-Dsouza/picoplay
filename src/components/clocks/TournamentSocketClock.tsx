@@ -1,18 +1,14 @@
+import { SocketChannels } from "@/backend/src/constants";
+import { SocketContextType, useSocket } from "@/src/providers/socket-provider";
 import React, { useState, useEffect, useMemo } from "react";
-import { Socket } from "socket.io-client";
 
-export function TournamentSocketClock({
-  socket,
-  className,
-}: {
-  socket: Socket | null;
-  className: string;
-}) {
+export function TournamentSocketClock({ className }: { className: string }) {
+  const { socket } = useSocket() as SocketContextType;
   const [timeLeft, setTimeLeft] = useState<number>(0);
 
   useEffect(() => {
     if (socket) {
-      socket.on("quizCountDown", (data: number) => {
+      socket.on(SocketChannels.QUIZ_COUNT_DOWN, (data: number) => {
         setTimeLeft(data);
       });
     }

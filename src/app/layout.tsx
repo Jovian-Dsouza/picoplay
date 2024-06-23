@@ -7,6 +7,7 @@ import { SolanaProvider } from "@/src/providers/solana-provider";
 import Footer from "@/src/components/Footer";
 import { RecoilProvider } from "@/src/providers/recoil-privoder";
 import { CustomWalletProvider } from "@/src/providers/custom-wallet-provider";
+import { SocketProvider } from "../providers/socket-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 const dmsans = DM_Sans({
@@ -32,13 +33,15 @@ export default function RootLayout({
           <RecoilProvider>
             <SolanaProvider>
               <CustomWalletProvider>
-                <div className="flex flex-col justify-between min-h-screen bg-[#F8FBFF] text-black">
-                  <div className="flex flex-col ">
-                    <Header />
-                    {children}
+                <SocketProvider>
+                  <div className="flex flex-col justify-between min-h-screen bg-[#F8FBFF] text-black">
+                    <div className="flex flex-col ">
+                      <Header />
+                      {children}
+                    </div>
+                    <Footer />
                   </div>
-                  <Footer />
-                </div>
+                </SocketProvider>
               </CustomWalletProvider>
             </SolanaProvider>
           </RecoilProvider>

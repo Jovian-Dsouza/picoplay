@@ -1,18 +1,14 @@
+import { SocketChannels } from "@/backend/src/constants";
+import { SocketContextType, useSocket } from "@/src/providers/socket-provider";
 import { useState, useEffect } from "react";
-import { Socket } from "socket.io-client";
 
-export function QuestionClock({
-  socket,
-  startTime,
-}: {
-  socket: Socket | null;
-  startTime: number | null;
-}) {
+export function QuestionClock({ startTime }: { startTime: number | null }) {
+  const { socket } = useSocket() as SocketContextType;
   const [timeLeft, setTimeLeft] = useState<number | null>(startTime);
 
   useEffect(() => {
     if (socket) {
-      socket.on("countDown", (data: number) => {
+      socket.on(SocketChannels.COUNT_DOWN, (data: number) => {
         setTimeLeft(data);
       });
     }

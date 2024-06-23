@@ -1,18 +1,16 @@
 import React from "react";
-import { Socket } from "socket.io-client";
 import Image from "next/image";
 import { TournamentSocketClock } from "@/src/components/clocks/TournamentSocketClock";
 
-function QuizWaiting({ socket }: { socket: Socket | null }) {
+function QuizWaiting() {
   return (
-    <div className={`w-full px-6 pt-6 pb-2 bg-[#F8FBFF] flex flex-col items-center justify-center`}>
+    <div
+      className={`w-full px-6 pt-6 pb-2 bg-[#F8FBFF] flex flex-col items-center justify-center`}
+    >
       <div className="flex flex-col items-center justify-center bg-white rounded-xl shadow-lg p-8 text-center max-w-sm w-full space-y-2">
         <div className="relative">
           <div className="absolute top-[6.5rem] left-7 bg-[#0F0E0C] w-[75%] h-[15%] rounded-lg flex items-center justify-center">
-            <TournamentSocketClock
-              socket={socket}
-              className="text-white font-bold text-xl"
-            />
+            <TournamentSocketClock className="text-white font-bold text-xl" />
           </div>
           <Image
             src="/slot_machine.png"

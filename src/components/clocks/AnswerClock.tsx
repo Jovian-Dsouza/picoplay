@@ -1,13 +1,13 @@
+import { SocketChannels } from "@/backend/src/constants";
+import { SocketContextType, useSocket } from "@/src/providers/socket-provider";
 import { useState, useEffect, useMemo } from "react";
-import { Socket } from "socket.io-client";
 
 export function AnswerClock({
-  socket,
   startTime,
 }: {
-  socket: Socket | null;
   startTime: number;
 }) {
+  const { socket } = useSocket() as SocketContextType;
   const [timeLeft, setTimeLeft] = useState<number>(startTime);
   const progress = useMemo(() => {
     const totalBars = 4;
@@ -22,7 +22,7 @@ export function AnswerClock({
 
   useEffect(() => {
     if (socket) {
-      socket.on("countDown", (data: number) => {
+      socket.on(SocketChannels.COUNT_DOWN, (data: number) => {
         setTimeLeft(data);
       });
     }

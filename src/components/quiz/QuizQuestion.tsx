@@ -1,16 +1,13 @@
 import React, { useState } from "react";
-import { QuestionWithTime as Question } from "@/backend/src/Types";
-import { Socket } from "socket.io-client";
 import { QuestionClock } from "@/src/components/clocks/QuestionClock";
 import { LockButton } from "@/src/components/quiz/LockButton";
+import { useRecoilValue } from "recoil";
+import { questionAtom } from "@/src/store/atoms/quizAtoms";
+import { SocketContextType, useSocket } from "@/src/providers/socket-provider";
 
-function QuizQuestion({
-  question,
-  socket,
-}: {
-  question: Question | null;
-  socket: Socket | null;
-}) {
+function QuizQuestion() {
+  const { socket } = useSocket() as SocketContextType;
+  const question = useRecoilValue(questionAtom);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
   if (!question) {
@@ -39,7 +36,7 @@ function QuizQuestion({
         <div className="font-bold text-xl font-dmsans text-black">
           Q. {String(question.question_id).padStart(2, "0")}
         </div>
-        <QuestionClock socket={socket} startTime={question.time} />
+        <QuestionClock startTime={question.time} />
       </div>
 
       <p className="mt-5 text-black text-lg font-semibold font-dmsans">

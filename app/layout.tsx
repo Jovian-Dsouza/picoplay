@@ -6,6 +6,7 @@ import { ReactQueryProvider } from "./providers/react-query-provider";
 import { SolanaProvider } from "./providers/solana-provider";
 import Footer from "./components/Footer";
 import { RecoilProvider } from "./providers/recoil-privoder";
+import { CustomWalletProvider } from "./providers/custom-wallet-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 const dmsans = DM_Sans({
@@ -30,13 +31,15 @@ export default function RootLayout({
         <ReactQueryProvider>
           <RecoilProvider>
             <SolanaProvider>
-              <div className="flex flex-col justify-between min-h-screen bg-[#F8FBFF] text-black">
-                <div className="flex flex-col ">
-                  <Header />
-                  {children}
+              <CustomWalletProvider>
+                <div className="flex flex-col justify-between min-h-screen bg-[#F8FBFF] text-black">
+                  <div className="flex flex-col ">
+                    <Header />
+                    {children}
+                  </div>
+                  <Footer />
                 </div>
-                <Footer />
-              </div>
+              </CustomWalletProvider>
             </SolanaProvider>
           </RecoilProvider>
         </ReactQueryProvider>

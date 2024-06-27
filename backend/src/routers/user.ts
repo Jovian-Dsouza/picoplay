@@ -11,7 +11,7 @@ const SIGN_MESSAGE = "Sign into Picoplay";
 const router = Router();
 
 const createJwtToken = (walletAddress: string): string => {
-  return jwt.sign({ userId: walletAddress }, JWT_SECRET);
+  return jwt.sign({ data: { walletAddress } }, JWT_SECRET); //TODO: Add expiry to the JWT token
 };
 
 const verifySignature = (
@@ -37,72 +37,70 @@ router.post("/checkuser", async (req, res) => {
     return res.json({ userFound: !!existingUser });
   } catch (error) {
     console.error("Error checking user:", error);
-    res.status(500).json({ message: "Internal server error"})
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
 router.post("/login", async (req, res) => {
-    try {
-      const { wallet_address, signature } = req.body;
-      const message = new TextEncoder().encode(SIGN_MESSAGE);
+  try {
+    const { wallet_address, signature } = req.body; //TODO verify message with nonce
+    const message = new TextEncoder().encode(SIGN_MESSAGE);
 
-      if (!verifySignature(message, signature, wallet_address)) {
-        return res.status(401).json({ message: "Incorrect signature" });
-      }
-
-      const existingUser = await prisma.user.findUnique({
-        where: { wallet_address },
-      });
-
-      if (existingUser) {
-        const token = createJwtToken(existingUser.wallet_address);
-        return res.json({ token });
-      } else {
-        return res
-          .status(400)
-          .json({ message: "User not found, please signup" });
-      }
-    } catch (error) {
-      console.error("Error checking user:", error);
-      res.status(500).json({ message: "Internal server error" });
+    if (!verifySignature(message, signature, wallet_address)) {
+      return res.status(401).json({ message: "Incorrect signature" });
     }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { wallet_address },
+    });
+
+    if (existingUser) {
+      const token = createJwtToken(existingUser.wallet_address);
+      return res.json({ token });
+    } else {
+      return res.status(400).json({ message: "User not found, please signup" });
+    }
+  } catch (error) {
+    console.error("Error checking user:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 router.post("/signin", async (req, res) => {
-    try {
-      const { wallet_address, signature, username, x_username, country_name } =
-        req.body;
-      const message = new TextEncoder().encode(SIGN_MESSAGE);
+  try {
+    const { wallet_address, signature, username, x_username, country_name } =
+      req.body;
+    const message = new TextEncoder().encode(SIGN_MESSAGE); //TODO verify message with nonce
 
-      if (!verifySignature(message, signature, wallet_address)) {
-        return res.status(401).json({ message: "Incorrect signature" });
-      }
-
-      const existingUser = await prisma.user.findUnique({
-        where: { wallet_address },
-      });
-
-      if (existingUser) {
-        const token = createJwtToken(existingUser.wallet_address);
-        return res.json({ token });
-      }
-
-      if (!username || !country_name) {
-        return res
-          .status(400)
-          .json({ message: "Username and country name are required" });
-      }
-
-      const newUser = await prisma.user.create({
-        data: { wallet_address, username, x_username, country_name },
-      });
-
-      const token = createJwtToken(newUser.wallet_address);
-      return res.json({ token });
-    } catch (error) {
-      console.error("Error checking user:", error);
-      res.status(500).json({ message: "Internal server error" });
+    if (!verifySignature(message, signature, wallet_address)) {
+      return res.status(401).json({ message: "Incorrect signature" });
     }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { wallet_address },
+    });
+
+    if (existingUser) {
+      const token = createJwtToken(existingUser.wallet_address);
+      return res.json({ token });
+    }
+
+    if (!username || !country_name) {
+      return res
+        .status(400)
+        .json({ message: "Username and country name are required" });
+    }
+
+    const newUser = await prisma.user.create({
+      data: { wallet_address, username, x_username, country_name },
+    });
+
+    const token = createJwtToken(newUser.wallet_address);
+    return res.json({ token });
+  } catch (error) {
+    console.error("Error checking user:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 export default router;

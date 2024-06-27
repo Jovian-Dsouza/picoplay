@@ -26,7 +26,7 @@ class Coordinator {
       this.handleNewClient(socket);
 
       socket.on(SocketChannels.SUBMIT_ANSWER, (data) => {
-        this.handleClientResponse(data);
+        this.handleClientResponse(socket, data);
       });
 
       socket.on("disconnect", () => {
@@ -48,15 +48,14 @@ class Coordinator {
     }
   }
 
-  private async handleClientResponse(response: ClientResponse) {
+  private async handleClientResponse(socket: Socket, response: ClientResponse) {
     try {
       const timestamp = dayjs().valueOf();
-      if (
-        this.questionEndTimestamp && timestamp <= this.questionEndTimestamp
-      ) {
+      const walletAddress = (socket.request as any).user.walletAddress;
+      if (this.questionEndTimestamp && timestamp <= this.questionEndTimestamp) {
         const timetaken = timestamp - this.questionStartTimestamp!;
         console.log(
-          `Received answer: ${response.answer} for question ID: ${response.question_id}, time: ${timetaken}`
+          `Received answer from client ${walletAddress}: ${response.answer} for question ID: ${response.question_id}, time: ${timetaken}`
         );
         // Push the user responses to Redis queue
         // await this.redisClient!.rPush(
@@ -64,7 +63,9 @@ class Coordinator {
         //   JSON.stringify(responseWithTimestamp)
         // );
       } else {
-        console.log("Client response is invalid: Time limit over");
+        console.log(
+          `Client response from ${walletAddress} is invalid: Time limit over`
+        );
       }
     } catch (error) {
       console.error("Error pushing response to Redis queue:", error);
@@ -97,7 +98,9 @@ class Coordinator {
   sendQuestion(question: QuestionWithTime) {
     const timestamp = dayjs();
     this.questionStartTimestamp = timestamp.valueOf();
-    this.questionEndTimestamp = timestamp.add(question.time, "second").valueOf();
+    this.questionEndTimestamp = timestamp
+      .add(question.time, "second")
+      .valueOf();
     this.question = question;
     this.answer = null;
     this.io.emit(SocketChannels.QUESTION, this.question);

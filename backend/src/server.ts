@@ -8,6 +8,7 @@ require("dotenv").config();
 import TournamentManager from "./TournamentManager";
 import Coordinator from "./Coordinator";
 import userRouter from "./routers/user"; 
+import { authenticateSocket } from "./middlewares/authenticate";
 
 const app = express();
 const server = createServer(app);
@@ -15,9 +16,10 @@ const io = new SocketIoServer(server, {
   cors: {
     origin: process.env.CLIENT_URL || "http://localhost:3000", // Replace with your frontend URL
     methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   },
 });
+io.engine.use(authenticateSocket);
 
 const redisClient = createClient();
 const prisma = new PrismaClient();

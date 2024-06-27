@@ -1,14 +1,25 @@
 "use client";
 
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Socket, io } from "socket.io-client";
-import { answerAtom, finishedAtom, questionAtom } from "../store/atoms/quizAtoms";
+import {
+  answerAtom,
+  finishedAtom,
+  questionAtom,
+} from "../store/atoms/quizAtoms";
 import {
   AnswerWithResponse,
   QuestionWithTime as Question,
 } from "@/backend/src/Types";
 import { SocketChannels } from "@/backend/src/constants";
+import { tokenAtom } from "../store/atoms/appAtoms";
 
 export interface SocketContextType {
   socket: Socket | null;
@@ -21,11 +32,20 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   const setQuestion = useSetRecoilState(questionAtom);
   const setAnswer = useSetRecoilState(answerAtom);
   const setFinished = useSetRecoilState(finishedAtom);
+  const token = useRecoilValue(tokenAtom);
 
   useEffect(() => {
+    if (!token) {
+      return;
+    }
     // Connect to the WebSocket server
     const socketInstance: Socket = io(
-      process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"
+      process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000",
+      {
+        extraHeaders: {
+          authorization: `bearer ${token}`,
+        },
+      }
     );
     setSocket(socketInstance);
 
@@ -56,7 +76,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       socketInstance.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
 
   return (
     <SocketContext.Provider value={{ socket, setSocket }}>

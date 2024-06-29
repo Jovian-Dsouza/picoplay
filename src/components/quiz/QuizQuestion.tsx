@@ -1,24 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { QuestionClock } from "@/src/components/clocks/QuestionClock";
 import { LockButton } from "@/src/components/quiz/LockButton";
 import { useRecoilValue } from "recoil";
 import { questionAtom } from "@/src/store/atoms/quizAtoms";
 import { SocketContextType, useSocket } from "@/src/providers/socket-provider";
+import { SocketChannels } from "@/backend/src/constants";
+import { ClientResponse } from "@/backend/src/Types";
+import { QuizSelectBox } from "./QuizSelectBox";
+
 
 function QuizQuestion() {
   const { socket } = useSocket() as SocketContextType;
   const question = useRecoilValue(questionAtom);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [selectedOption, setSetectedOption] = useState<string>("");
+
+  useEffect(() => {
+    if (question) {
+      setSetectedOption("");
+    }
+  }, [question]);
 
   if (!question) {
     return null;
   }
+
   const handleSubmit = () => {
-    if (socket && question && selectedAnswer) {
-      socket.emit("submitAnswer", {
+    if (socket && question && selectedOption !== "") {
+      const clientResponse: ClientResponse = {
         question_id: question.question_id,
-        answer: selectedAnswer,
-      });
+        user_option: selectedOption,
+      };
+      socket.emit(SocketChannels.SUBMIT_ANSWER, clientResponse);
     }
   };
 
@@ -49,36 +61,14 @@ function QuizQuestion() {
           question.answer_3,
           question.answer_4,
         ].map((answer, index) => (
-          <li
+          <QuizSelectBox
             key={index}
-            className={`flex items-center border rounded-md p-2 ${
-              selectedAnswer === answer
-                ? "bg-[#EDF3FD] border-[#4785FF]"
-                : "bg-white border-black border-opacity-10"
-            }`}
-          >
-            <input
-              type="radio"
-              id={`option${index}-${question.question_id}`}
-              name={`question${question.question_id}`}
-              className="mr-2 hidden"
-              checked={selectedAnswer === answer}
-              onChange={() => setSelectedAnswer(answer)}
-            />
-            <label
-              htmlFor={`option${index}-${question.question_id}`}
-              className="flex items-center cursor-pointer w-full"
-            >
-              <span
-                className={`w-6 h-6 flex items-center justify-center border rounded-md mr-4 font-[500] font-dmsans text-lg`}
-              >
-                {String.fromCharCode(65 + index)}
-              </span>
-              <span className="text-black text-lg font-dmsans font-[500]">
-                {answer}
-              </span>
-            </label>
-          </li>
+            answer={answer}
+            index={index}
+            question_id={question.question_id}
+            selectedOption={selectedOption}
+            setSelectedOption={setSetectedOption}
+          />
         ))}
       </ul>
       <div className="flex flex-row mt-8 items-center justify-between">

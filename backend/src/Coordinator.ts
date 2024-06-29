@@ -44,6 +44,7 @@ class Coordinator {
       socket.emit(SocketChannels.QUESTION, this.question);
     }
     if (this.answer) {
+      //TODO
       socket.emit(SocketChannels.ANSWER, this.answer);
     }
   }
@@ -55,12 +56,23 @@ class Coordinator {
       if (this.questionEndTimestamp && timestamp <= this.questionEndTimestamp) {
         const timetaken = timestamp - this.questionStartTimestamp!;
         console.log(
-          `Received answer from client ${walletAddress}: ${response.answer} for question ID: ${response.question_id}, time: ${timetaken}`
+          `Received answer from client ${walletAddress}: ${response.user_option} for question ID: ${response.question_id}, time: ${timetaken}`
         );
-        // Push the user responses to Redis queue
+        const clientResponse = {
+          selected_option: response.user_option,
+          timetaken: timetaken,
+        };
+        // 1. Store client answer in redis cache to be used in send answer to check if the answer is correct or not
+        await this.redisClient.hSet(
+          `responses:${this.tournament?.tournament_id}:${response.question_id}`,
+          walletAddress,
+          JSON.stringify(clientResponse)
+        );
+
+        // 2. Push the Client responses to Redis queue
         // await this.redisClient!.rPush(
         //   REDIS_RESPONSES_QUEUE,
-        //   JSON.stringify(responseWithTimestamp)
+        //   JSON.stringify(clientResponse)
         // );
       } else {
         console.log(
@@ -72,8 +84,19 @@ class Coordinator {
     }
   }
 
+  private async clearRedisCache() {
+    // Clear responses for the current tournament from Redis
+    // await this.redisClient.del(`responses:${this.tournament?.tournament_id}`);
+    // await this.redisClient.del(`scores:${this.tournament?.tournament_id}`);
+    await this.redisClient.flushDb();
+    console.log(
+      `Cleared Redis cache for tournament ${this.tournament?.tournament_id}`
+    );
+  }
+
   startTournament(tournament: Tournament) {
     this.tournament = tournament;
+    this.clearRedisCache();
     this.io.emit(SocketChannels.TOURNAMENT_STARTED, tournament);
   }
 
@@ -107,11 +130,99 @@ class Coordinator {
     this.startCountDown(question.time);
   }
 
-  sendAnswer(answer: Answer) {
+  async sendAnswer(answer: Answer) {
     this.question = null;
     this.answer = answer;
-    this.io.emit(SocketChannels.ANSWER, answer);
+
+    // For each connected client, check the user response from Redis and check if the answer is correct or wrong
+    const clientSockets = await this.io.fetchSockets();
+    const multi = this.redisClient.multi();
+
+    const walletAddresses = clientSockets.map(
+      (socket) => ((socket as any).request as any).user.walletAddress
+    );
+
+    const scoreValues = await this.redisClient.hmGet(
+      `scores:${this.tournament?.tournament_id}`,
+      ...walletAddresses
+    );
+
+    const responseValues = await this.redisClient.hmGet(
+      `responses:${this.tournament?.tournament_id}:${answer.question_id}`,
+      ...walletAddresses
+    );
+
+    clientSockets.forEach((socket, index) => {
+      const walletAddress = walletAddresses[index];
+      const responseJson = responseValues[index];
+      const scoreJson = scoreValues[index];
+
+      const { total_correct, total_incorrect } = this.calculateScores(
+        answer.question_id,
+        responseJson,
+        scoreJson,
+        answer.correct_option
+      );
+
+      socket.emit(SocketChannels.ANSWER, {
+        question_id: answer.question_id,
+        correct_option: answer.correct_option,
+        user_option: responseJson
+          ? JSON.parse(responseJson).selected_option
+          : "",
+        time: answer.time,
+        total_correct: total_correct,
+        total_incorrect: total_incorrect,
+      });
+
+      multi.hSet(
+        `scores:${this.tournament?.tournament_id}`,
+        walletAddress,
+        JSON.stringify({ total_correct, total_incorrect })
+      );
+    });
+
+    multi.exec((err: any, replies: any) => {
+      if (err) {
+        console.error("Error executing Redis transaction:", err);
+      } else {
+        console.log("Redis transaction executed successfully");
+      }
+    });
     this.startCountDown(answer.time);
+  }
+
+  private calculateScores(
+    questionId: number,
+    responseJson: string,
+    scoreJson: string,
+    correctOption: string
+  ) {
+    let total_correct = 0;
+    let total_incorrect = 0;
+
+    if (scoreJson) {
+      const scores = JSON.parse(scoreJson);
+      total_correct = scores.total_correct;
+      total_incorrect = scores.total_incorrect;
+    }
+
+    const total_skip = questionId - total_correct - total_incorrect - 1;
+    total_incorrect += total_skip;
+
+    if (responseJson) {
+      const clientResponse = JSON.parse(responseJson);
+
+      if (clientResponse.selected_option === correctOption) {
+        total_correct += 1;
+      } else {
+        total_incorrect += 1;
+      }
+    } else {
+      total_incorrect += 1;
+    }
+
+    return { total_correct, total_incorrect };
   }
 }
 

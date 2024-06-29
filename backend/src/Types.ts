@@ -20,13 +20,13 @@ export interface Answer {
   question_id: number;
   question_text: string;
   correct_answer: string;
+  correct_option: string;
   time: number;
 }
 
 export interface AnswerWithResponse {
   question_id: number;
   correct_option: string;
-  correct_answer: string;
   user_option: string;
   time: number;
   total_correct: number;
@@ -34,8 +34,8 @@ export interface AnswerWithResponse {
 }
 
 export interface ClientResponse {
-  answer: string;
-  question_id: string;
+  user_option: string;
+  question_id: number;
 }
 
 export interface ClientResponseWithTimestamp extends ClientResponse {

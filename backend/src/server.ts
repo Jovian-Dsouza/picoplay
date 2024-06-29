@@ -22,6 +22,21 @@ const io = new SocketIoServer(server, {
 io.engine.use(authenticateSocket);
 
 const redisClient = createClient();
+redisClient.on("error", (err) => console.error("Redis Client Error", err));
+redisClient.on("connect", () => console.log("Redis client connected"));
+redisClient.on("ready", () => console.log("Redis client ready"));
+redisClient.on("end", () => console.log("Redis client disconnected"));
+
+(async () => {
+  try {
+    await redisClient.connect();
+    console.log("Redis client successfully connected");
+  } catch (err) {
+    console.error("Error connecting Redis client:", err);
+  }
+})();
+
+
 const prisma = new PrismaClient();
 const coordinator = new Coordinator(io, redisClient);
 const tournamentManager = new TournamentManager(prisma, coordinator);

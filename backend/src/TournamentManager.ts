@@ -76,6 +76,24 @@ class TournamentManager {
     setTimeout(() => this.sendAnswer(), (this.timeForEachQuestion + this.timeDelayBetweenQuestionAnswer) * 1000);
   }
 
+  private calculateCorrectOption(question: QuestionWithAnswer): string {
+  if (!question) {
+    throw new Error("Question cannot be null or undefined");
+  }
+  switch (question.correct_answer) {
+    case question.answer_1:
+      return "A";
+    case question.answer_2:
+      return "B";
+    case question.answer_3:
+      return "C";
+    case question.answer_4:
+      return "D";
+    default:
+      throw new Error("Invalid correct answer index");
+  }
+}
+
   private async sendAnswer() {
     const question = this.questions[this.currentQuestionIndex];
 
@@ -83,6 +101,7 @@ class TournamentManager {
       question_id: question.question_id,
       question_text: question.question_text,
       correct_answer: question.correct_answer,
+      correct_option: this.calculateCorrectOption(question),
       time: this.timeForEachAnswer,
     });
 
